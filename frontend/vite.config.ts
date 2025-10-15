@@ -11,4 +11,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    host: "0.0.0.0", // برای اینکه از بیرون کانتینر هم قابل دسترس باشه
+    allowedHosts: ["ehsan.darkube.app"], // هاست مجاز
+    port: 5173, // (اختیاری) اگر پورتی خاص می‌خوای تنظیم کن
+  },
 })
