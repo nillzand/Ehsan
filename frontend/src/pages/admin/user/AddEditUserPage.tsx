@@ -29,15 +29,13 @@ const AddEditUserPage = () => {
     const [role, setRole] = useState<'SUPER_ADMIN' | 'COMPANY_ADMIN' | 'EMPLOYEE'>('EMPLOYEE');
 
     useEffect(() => {
-        // Super Admins need a list of all companies to choose from
         if (isSuperAdmin) {
             getCompanies().then(setAllCompanies);
         }
-        // Company Admins need their own company info to auto-assign new users
         if (isCompanyAdmin) {
             getCurrentUser().then(user => {
                 setCurrentUser(user);
-                setCompanyId(String(user.company)); // Pre-set and lock the company ID
+                setCompanyId(String(user.company));
             });
         }
     }, [isSuperAdmin, isCompanyAdmin]);
@@ -83,14 +81,14 @@ const AddEditUserPage = () => {
                         </div>
                          <div className="space-y-2">
                             <Label htmlFor="password">رمز عبور</Label>
-                            <Input id="password" type="password" value={password} required />
+                            <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="company">شرکت</Label>
                              <Select 
                                 onValueChange={setCompanyId} 
                                 value={companyId}
-                                disabled={isCompanyAdmin} // Disable for Company Admins
+                                disabled={isCompanyAdmin}
                                 required
                             >
                                 <SelectTrigger><SelectValue placeholder="انتخاب شرکت" /></SelectTrigger>
@@ -109,7 +107,7 @@ const AddEditUserPage = () => {
                              <Select 
                                 onValueChange={(value) => setRole(value as any)} 
                                 defaultValue="EMPLOYEE" 
-                                disabled={isCompanyAdmin} // Disable for Company Admins
+                                disabled={isCompanyAdmin}
                                 required
                             >
                                 <SelectTrigger><SelectValue /></SelectTrigger>

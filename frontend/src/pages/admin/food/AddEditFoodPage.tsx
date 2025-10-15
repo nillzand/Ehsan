@@ -14,7 +14,6 @@ const AddEditFoodPage = () => {
     const navigate = useNavigate();
     const [categories, setCategories] = useState<FoodCategory[]>([]);
     
-    // Form State
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
@@ -35,8 +34,8 @@ const AddEditFoodPage = () => {
                 name,
                 price,
                 description,
-                category: parseInt(categoryId),
-                image: null, // Image upload is a future task
+                category: parseInt(categoryId), // Corrected from category_id
+                image: null,
                 is_available: true,
             });
             navigate('/admin/foods');
