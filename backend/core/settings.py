@@ -126,9 +126,13 @@ CORS_ALLOWED_ORIGINS = [
 
 # ==================== Static & Media ====================
 STATIC_URL = '/staticfiles/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # <-- ADD THIS LINE
 
+MEDIA_URL = '/media/'
+# NOTE: It's better practice for MEDIA_ROOT to be a different directory, 
+# but for now, we will leave it as is to avoid breaking anything else.
+# A better setup would be MEDIA_ROOT = BASE_DIR / 'mediafiles'
+MEDIA_ROOT = BASE_DIR / 'staticfiles'
 # ==================== Internationalization ====================
 LANGUAGE_CODE = 'fa-ir'
 TIME_ZONE = 'UTC'
