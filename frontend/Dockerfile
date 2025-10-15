@@ -6,7 +6,7 @@ WORKDIR /app
 # ---- NEW: Define build arguments ----
 # This declares a build-time variable that we can pass from docker-compose.
 # We can also give it a default value for safety.
-ARG VITE_API_BASE_URL=/api
+ARG VITE_API_BASE_URL
 
 # ---- NEW: Set the environment variable ----
 # This makes the ARG available as a regular environment variable
