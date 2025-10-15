@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # --- Backend Service (Django + Gunicorn) ---
+  backend:
+    build: ./backend
+    # We move the command to the prod override file
+    volumes:
+      # We add a volume for static files that Nginx will use
+      - staticfiles:/app/staticfiles
+    env_file:
+      - .env.prod
+    depends_on:
+      - db
+
+  # --- Frontend Build Service ---
+  # This is a temporary service just to build our React app
+  frontend-build:
+    build: ./frontend
+    # After it runs `npm run build`, it will create a 'dist' volume
+    volumes:
+      - frontend-dist:/app/dist
+
+  # --- Database Service (PostgreSQL) ---
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    
+  # --- Nginx Reverse Proxy Service ---
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"  # Map host port 80 to container port 80
+    volumes:
+      # Mount the built frontend files and backend static files
+      - frontend-dist:/usr/share/nginx/html
+      - staticfiles:/app/staticfiles
+    depends_on:
+      - backend
+      - frontend-build
+
+# Define the named volumes
+volumes:
+  postgres_data:
+  frontend-dist:
+  staticfiles:
