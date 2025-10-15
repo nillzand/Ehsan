@@ -55,8 +55,8 @@ const AddEditCompanyPage = () => {
                 <Input id="name" value={company.name || ''} onChange={e => setCompany({...company, name: e.target.value})} />
               </div>
                <div className="space-y-2">
-                <Label htmlFor="admin_name">نام ادمین</Label>
-                <Input id="admin_name" value={company.admin_name || ''} onChange={e => setCompany({...company, admin_name: e.target.value})} />
+                <Label htmlFor="contact_person">نام ادمین</Label>
+                <Input id="contact_person" value={company.contact_person || ''} onChange={e => setCompany({...company, contact_person: e.target.value})} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="contact_phone">شماره تماس</Label>

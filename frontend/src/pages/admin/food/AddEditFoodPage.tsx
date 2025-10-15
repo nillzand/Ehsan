@@ -5,8 +5,8 @@ import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea'; // You may need to add this: npx shadcn-ui@latest add textarea
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // And this: npx shadcn-ui@latest add select
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getFoodCategories, createFoodItem } from '@/services/foodService';
 import { FoodCategory } from '@/types';
 
@@ -35,7 +35,7 @@ const AddEditFoodPage = () => {
                 name,
                 price,
                 description,
-                category_id: parseInt(categoryId),
+                category: parseInt(categoryId),
                 image: null, // Image upload is a future task
                 is_available: true,
             });
