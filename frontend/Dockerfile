@@ -1,21 +1,29 @@
-# Use the official Node.js image. 'alpine' is a lightweight version.
-FROM node:20-alpine
+# ---- Stage 1: Build the React App ----
+FROM node:20-alpine AS build
 
-# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json to leverage Docker cache
+# ---- NEW: Define build arguments ----
+# This declares a build-time variable that we can pass from docker-compose.
+# We can also give it a default value for safety.
+ARG VITE_API_BASE_URL=/api
+
+# ---- NEW: Set the environment variable ----
+# This makes the ARG available as a regular environment variable
+# for the subsequent RUN commands.
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 COPY package*.json ./
-
-# Install all dependencies
 RUN npm install
-
-# Copy the rest of your app's source code
 COPY . .
 
-# Expose the port Vite runs on
-EXPOSE 5173
+# Now, when this command runs, it will have access to process.env.VITE_API_BASE_URL
+RUN npm run build
 
-# The command to start the Vite development server
-# The '-- --host' part is crucial to make the server accessible from outside the container
-CMD ["npm", "run", "dev", "--", "--host"]
+# ---- Stage 2: Serve with Nginx ----
+# This stage just copies the finished build; it doesn't need the variables.
+FROM nginx:stable-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+# We will handle the nginx.conf from the main Nginx service, so no need to copy it here.
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
