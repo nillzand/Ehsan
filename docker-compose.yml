@@ -49,3 +49,4 @@ volumes:
   postgres_data:
   frontend-dist:
   staticfiles:
+  mediafiles: 
