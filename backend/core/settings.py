@@ -96,8 +96,22 @@ else:
     }
 
 # ==================== Authentication ====================
-AUTH_USER_MODEL = 'users.User'
 
+# ==================== Authentication ====================
+AUTH_USER_MODEL = 'users.User'
+LOGIN_REDIRECT_URL = '/admin/'
+LOGOUT_REDIRECT_URL = '/'
+
+# --- PRODUCTION SECURITY SETTINGS ---
+# Add this entire block for your server environment
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = False # Nginx is already handling this
+    SECURE_HSTS_SECONDS = 31536000 # Optional: one year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True # Optional
+    SECURE_HSTS_PRELOAD = True # Optional
 # ==================== REST Framework ====================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
