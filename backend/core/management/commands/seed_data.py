@@ -37,8 +37,8 @@ class Command(BaseCommand):
                 self.create_menu_items()
                 self.create_super_admin()
 
-                # Create 3 companies with all related data
-                for i in range(3):
+                # Create 1 companies with all related data
+                for i in range(1):
                     self.create_company_and_related_data(i + 1, fake)
 
                 self.stdout.write(self.style.SUCCESS("Database seeding completed successfully!"))
