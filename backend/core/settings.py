@@ -7,10 +7,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ==================== Security ====================
 SECRET_KEY = 'django-insecure-your-secret-key-here'  # Replace this in production
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS_str = os.environ.get('ALLOWED_HOSTS', '')
+# Make sure your domain is listed here
+ALLOWED_HOSTS_str = os.environ.get('ALLOWED_HOSTS', 'ehsan-backend.darkube.app,localhost,127.0.0.1')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_str.split(',') if host.strip()]
+
 
 # ==================== Installed Apps ====================
 INSTALLED_APPS = [
@@ -95,7 +97,6 @@ else:
         }
     }
 
-# ==================== Authentication ====================
 
 # ==================== Authentication ====================
 AUTH_USER_MODEL = 'users.User'
@@ -136,10 +137,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
-# For development, you can temporarily use:
-# CORS_ALLOW_ALL_ORIGINS = True
 
-# backend/core/settings.py
 
 # ==================== Static & Media ====================
 STATIC_URL = '/staticfiles/'
@@ -193,6 +191,15 @@ LOGGING = {
 # Employees must order at least 2 full days in advance
 RESERVATION_LEAD_DAYS = 2
 
+# Ensure Django trusts requests coming from your domain over both HTTP and HTTPS
 CSRF_TRUSTED_ORIGINS = [
     'https://ehsan-backend.darkube.app',
+    'http://ehsan-backend.darkube.app',
 ]
+
+# Tell Django to look for a header from Nginx to know the connection is secure
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# In production, ensure cookies are only sent over a secure connection
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
