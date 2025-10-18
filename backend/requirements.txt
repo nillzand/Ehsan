@@ -24,3 +24,5 @@ Faker
 
 
 Pillow
+
+whitenoise[brotli]

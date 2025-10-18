@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 # ==================== Middleware ====================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # CORS middleware should be early
     'django.middleware.common.CommonMiddleware',
@@ -132,9 +133,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 # The directory for user-uploaded files (media).
-MEDIA_ROOT = BASE_DIR / 'mediafiles' # <-- FIXED: Changed to a separate directory
+MEDIA_ROOT = BASE_DIR / 'mediafiles' 
 
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # ==================== Internationalization ====================
 LANGUAGE_CODE = 'fa-ir'
 TIME_ZONE = 'UTC'
