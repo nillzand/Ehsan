@@ -178,3 +178,7 @@ LOGGING = {
 # ==================== Custom Settings ====================
 # Employees must order at least 2 full days in advance
 RESERVATION_LEAD_DAYS = 2
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://ehsan-backend.darkube.app',
+]
