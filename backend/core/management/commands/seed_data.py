@@ -30,7 +30,10 @@ class Command(BaseCommand):
 
         try:
             with transaction.atomic():
-                self.clear_data()
+                # Keep superusers before clearing other data
+                User.objects.exclude(is_superuser=True).delete()
+
+                self.clear_data()  # پاک‌سازی داده‌ها (حالا دیگر کاربران غیر superuser حذف نمی‌شوند)
                 self.create_menu_items()
                 self.create_super_admin()
 
