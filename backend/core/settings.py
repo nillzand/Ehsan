@@ -124,15 +124,17 @@ CORS_ALLOWED_ORIGINS = [
 # For development, you can temporarily use:
 # CORS_ALLOW_ALL_ORIGINS = True
 
+# backend/core/settings.py
+
 # ==================== Static & Media ====================
 STATIC_URL = '/staticfiles/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # <-- ADD THIS LINE
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
-# NOTE: It's better practice for MEDIA_ROOT to be a different directory, 
-# but for now, we will leave it as is to avoid breaking anything else.
-# A better setup would be MEDIA_ROOT = BASE_DIR / 'mediafiles'
-MEDIA_ROOT = BASE_DIR / 'staticfiles'
+# The directory for user-uploaded files (media).
+MEDIA_ROOT = BASE_DIR / 'mediafiles' # <-- FIXED: Changed to a separate directory
+
+
 # ==================== Internationalization ====================
 LANGUAGE_CODE = 'fa-ir'
 TIME_ZONE = 'UTC'
