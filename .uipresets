@@ -2312,9 +2312,6 @@
 .git/HEAD
 .git/index
 .git/ORIG_HEAD
-nginx
-nginx/Dockerfile
-nginx/nginx.conf
 .gitignore
 .uipresets
 EhsanRestaurant.rar
