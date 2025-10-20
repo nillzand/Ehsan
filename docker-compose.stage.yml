@@ -1,0 +1,53 @@
+# docker-compose.stage.yml
+
+version: '3.8'
+
+services:
+  # --- Backend Service (Django + Gunicorn) for Staging ---
+  backend:
+    build: ./backend
+    volumes:
+      - mediafiles:/app/mediafiles # Staticfiles are handled by WhiteNoise
+    env_file:
+      - ./backend/.env.stage # <-- This is the key change
+    depends_on:
+      - db
+
+  # --- Frontend Build Service for Staging ---
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Pass the API URL from the .env.stage file into the frontend build
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    volumes:
+      - frontend-dist:/app/dist
+
+  # --- Database Service (PostgreSQL) for Staging ---
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data_stage:/var/lib/postgresql/data/
+    environment:
+      # These can be different for staging if you choose
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    
+  # --- Nginx Reverse Proxy Service for Staging ---
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - frontend-dist:/usr/share/nginx/html
+      - mediafiles:/app/mediafiles
+    depends_on:
+      - backend
+      - frontend
+
+# Define named volumes for staging to keep data separate from production
+volumes:
+  postgres_data_stage:
+  frontend-dist:
+  mediafiles:
