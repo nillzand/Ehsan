@@ -25,3 +25,5 @@ Faker
 Pillow
 
 whitenoise[brotli]
+# For parsing database URLs
+dj-database-url

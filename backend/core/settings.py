@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import timedelta
 import os
+import dj_database_url
 
 # ==================== Base Path ====================
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,14 +79,12 @@ TEMPLATES = [
 # ==================== Database ====================
 # This section is now configured to read from environment variables for production.
 DATABASES = {
-    'default': {
-        'ENGINE': os.environ.get('DB_ENGINE'),
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASS'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT'),
-    }
+    'default': dj_database_url.config(
+        # Fallback to a local SQLite database for development
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        # Enable persistent connections
+        conn_max_age=600
+    )
 }
 
 # ==================== Authentication ====================
