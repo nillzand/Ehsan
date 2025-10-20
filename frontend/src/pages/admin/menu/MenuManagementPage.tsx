@@ -11,7 +11,8 @@ import { FoodItem, Schedule, SideDish } from '@/types';
 
 import { getSchedules } from '@/services/scheduleService';
 import { getFoodItems, getSideDishes } from '@/services/foodService';
-import { getDailyMenuForDate, setDailyMenu } from '@/services/menuService';
+// [MODIFIED] Correct function is already imported, but the call was wrong.
+import { getDailyMenuForDate, saveOrUpdateDailyMenu } from '@/services/menuService';
 
 const MenuManagementPage = () => {
     // Data states for holding lists from the backend
@@ -24,6 +25,9 @@ const MenuManagementPage = () => {
     const [selectedDate, setSelectedDate] = useState<string>('');
     const [selectedFoodIds, setSelectedFoodIds] = useState<Set<number>>(new Set());
     const [selectedSideIds, setSelectedSideIds] = useState<Set<number>>(new Set());
+    
+    // [NEW] Add state to hold the ID of an existing menu for the selected date
+    const [existingMenuId, setExistingMenuId] = useState<number | null>(null);
 
     // UI states for loading, messages, and filtering
     const [isLoading, setIsLoading] = useState(false);
@@ -64,11 +68,13 @@ const MenuManagementPage = () => {
             try {
                 const menu = await getDailyMenuForDate(Number(selectedScheduleId), selectedDate);
                 if (menu) {
-                    // If a menu exists, pre-fill the checkboxes
+                    // If a menu exists, pre-fill the checkboxes and store its ID
+                    setExistingMenuId(menu.id);
                     setSelectedFoodIds(new Set(menu.available_foods.map(f => f.id)));
                     setSelectedSideIds(new Set(menu.available_sides.map(s => s.id)));
                 } else {
-                    // Otherwise, clear the selections
+                    // Otherwise, clear the selections and the ID
+                    setExistingMenuId(null);
                     setSelectedFoodIds(new Set());
                     setSelectedSideIds(new Set());
                 }
@@ -100,12 +106,17 @@ const MenuManagementPage = () => {
         setIsLoading(true);
         setMessage(null);
         try {
-            await setDailyMenu({
-                schedule_id: Number(selectedScheduleId),
+            // [FIXED] Use the correct function 'saveOrUpdateDailyMenu' with the correct arguments
+            const payload = {
                 date: selectedDate,
-                food_ids: Array.from(selectedFoodIds),
-                side_ids: Array.from(selectedSideIds)
-            });
+                available_foods: Array.from(selectedFoodIds),
+                available_sides: Array.from(selectedSideIds),
+            };
+            await saveOrUpdateDailyMenu(
+                Number(selectedScheduleId),
+                existingMenuId, // Pass the existing menu ID (or null if it's new)
+                payload
+            );
             setMessage({ type: 'success', text: 'Menu saved successfully!' });
         } catch (error) {
             setMessage({ type: 'error', text: 'Failed to save menu.' });
