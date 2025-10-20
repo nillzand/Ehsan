@@ -6,11 +6,11 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ==================== Security ====================
-SECRET_KEY = 'django-insecure-your-secret-key-here'  # Replace this in production
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-your-secret-key-here')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 # Make sure your domain is listed here
-ALLOWED_HOSTS_str = os.environ.get('ALLOWED_HOSTS', 'ehsan-backend.darkube.app,localhost,127.0.0.1')
+ALLOWED_HOSTS_str = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_str.split(',') if host.strip()]
 
 
@@ -31,14 +31,14 @@ INSTALLED_APPS = [
     'django_filters',
 
     # Local apps
-    'core',          # Added to help Django discover sibling apps
-    'users',         # Changed from UsersConfig
+    'core',
+    'users',
     'companies',
     'menu',
     'schedules',
     'orders',
     'wallets',
-    'contracts',     # Newly added app
+    'contracts',
 ]
 
 # ==================== Middleware ====================
@@ -46,7 +46,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # CORS middleware should be early
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -76,27 +76,17 @@ TEMPLATES = [
 ]
 
 # ==================== Database ====================
-if DEBUG:
-    print("Running in DEBUG mode. Using SQLite database.")
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+# This section is now configured to read from environment variables for production.
+DATABASES = {
+    'default': {
+        'ENGINE': os.environ.get('DB_ENGINE'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASS'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
-else:
-    print("Running in PRODUCTION mode. Using PostgreSQL database.")
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASS'),
-            'HOST': os.environ.get('DB_HOST'),
-            'PORT': os.environ.get('DB_PORT'),
-        }
-    }
-
+}
 
 # ==================== Authentication ====================
 AUTH_USER_MODEL = 'users.User'
@@ -104,15 +94,15 @@ LOGIN_REDIRECT_URL = '/admin/'
 LOGOUT_REDIRECT_URL = '/'
 
 # --- PRODUCTION SECURITY SETTINGS ---
-# Add this entire block for your server environment
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = False # Nginx is already handling this
-    SECURE_HSTS_SECONDS = 31536000 # Optional: one year
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True # Optional
-    SECURE_HSTS_PRELOAD = True # Optional
+    SECURE_SSL_REDIRECT = False
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
 # ==================== REST Framework ====================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -136,70 +126,29 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://ehsan-backend.darkube.app" # Add your frontend domain
 ]
-
 
 # ==================== Static & Media ====================
 STATIC_URL = '/staticfiles/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 MEDIA_URL = '/media/'
-# The directory for user-uploaded files (media).
-MEDIA_ROOT = BASE_DIR / 'mediafiles' 
-
+MEDIA_ROOT = BASE_DIR / 'mediafiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # ==================== Internationalization ====================
 LANGUAGE_CODE = 'fa-ir'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-
-LOCALE_PATHS = [
-    BASE_DIR / 'locale',
-]
+LOCALE_PATHS = [BASE_DIR / 'locale']
 
 # ==================== Default Primary Key Field ====================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ==================== Logging ====================
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',  # Change to DEBUG for more verbose output
-    },
-}
-
 # ==================== Custom Settings ====================
-# Employees must order at least 2 full days in advance
 RESERVATION_LEAD_DAYS = 2
-
-# Ensure Django trusts requests coming from your domain over both HTTP and HTTPS
 CSRF_TRUSTED_ORIGINS = [
     'https://ehsan-backend.darkube.app',
     'http://ehsan-backend.darkube.app',
 ]
-
-# Tell Django to look for a header from Nginx to know the connection is secure
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# In production, ensure cookies are only sent over a secure connection
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SECURE = not DEBUG

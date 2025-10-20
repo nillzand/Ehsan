@@ -1,5 +1,5 @@
 // frontend/src/store/authStore.ts
-import create from 'zustand';
+import { create } from 'zustand'; // [MODIFIED] Changed from default import
 import { persist } from 'zustand/middleware';
 import { jwtDecode } from 'jwt-decode';
 import { AuthUser } from '@/types'; // Import our new AuthUser type

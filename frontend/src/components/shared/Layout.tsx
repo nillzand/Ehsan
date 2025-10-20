@@ -12,7 +12,6 @@ export const Layout = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch full user details for employees (to show budget)
         if (user && !isSuperAdmin && !isCompanyAdmin) {
             getCurrentUser().then(setFullUser).catch(console.error);
         }
@@ -23,17 +22,14 @@ export const Layout = () => {
         navigate('/login');
     };
 
-    const navLinkClasses =
-        'block text-white text-center text-lg py-3 hover:bg-white/10 transition-colors rounded-md';
+    const navLinkClasses = 'block text-white text-center text-lg py-3 hover:bg-white/10 transition-colors rounded-md';
     const activeLinkClasses = 'bg-white/20';
 
-    // 👩‍💼 Employee links
     const employeeLinks = [
         { to: '/menu', text: 'ثبت سفارش' },
         { to: '/orders', text: 'سفارشات من' },
     ];
 
-    // 🏢 Company admin links
     const companyAdminLinks = [
         { to: '/admin/dashboard', text: 'داشبورد' },
         { to: '/menu', text: 'مشاهده منو' },
@@ -41,29 +37,22 @@ export const Layout = () => {
         { to: '/admin/users', text: 'مدیریت کاربران' },
     ];
 
-    // 👑 Super admin links (UPDATED)
     const superAdminLinks = [
         { to: '/admin/dashboard', text: 'داشبورد' },
         { to: '/menu', text: 'مشاهده منو شرکت‌ها' },
         { to: '/admin/companies', text: 'مدیریت شرکت‌ها' },
         { to: '/admin/contracts', text: 'مدیریت قراردادها' },
         { to: '/admin/foods', text: 'مدیریت غذا' },
-        // ✅ Replaced “برنامه غذایی” with “تقویم منو”
+        // [MODIFIED] Link updated to the new calendar page
         { to: '/admin/menu-calendar', text: 'تقویم منو' },
         { to: '/admin/users', text: 'مدیریت کاربران' },
         { to: '/admin/reports', text: 'گزارشات' },
     ];
 
-    // Determine which links to show based on role
-    const links = isSuperAdmin
-        ? superAdminLinks
-        : isCompanyAdmin
-        ? companyAdminLinks
-        : employeeLinks;
+    const links = isSuperAdmin ? superAdminLinks : isCompanyAdmin ? companyAdminLinks : employeeLinks;
 
     return (
         <div className="min-h-screen flex flex-row bg-gray-100">
-            {/* Sidebar */}
             <aside className="w-64 bg-[#88b9d0] flex flex-col p-4 shadow-lg text-white">
                 <div className="flex flex-col items-center mt-4 mb-8">
                     <img
@@ -78,8 +67,6 @@ export const Layout = () => {
                     <p className="font-bold text-lg mt-1">
                         {user?.username} خوش آمدی!
                     </p>
-
-                    {/* Budget info for employees */}
                     {fullUser && (
                         <p className="text-sm mt-2">
                             اعتبار شما: {Number(fullUser.budget).toLocaleString('fa-IR')} تومان
@@ -87,7 +74,6 @@ export const Layout = () => {
                     )}
                 </div>
 
-                {/* Navigation links */}
                 <nav className="flex-grow space-y-3">
                     {links.map((link, index) => (
                         <NavLink
@@ -102,7 +88,6 @@ export const Layout = () => {
                     ))}
                 </nav>
 
-                {/* Footer */}
                 <div className="mt-auto text-center">
                     <Button
                         variant="default"
@@ -118,7 +103,6 @@ export const Layout = () => {
                 </div>
             </aside>
 
-            {/* Main content */}
             <main className="flex-grow p-6 overflow-auto">
                 <Outlet />
             </main>

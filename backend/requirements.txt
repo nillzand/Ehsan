@@ -22,7 +22,6 @@ psycopg2-binary
 # To generate fake data for seeding the database
 Faker
 
-
 Pillow
 
 whitenoise[brotli]

@@ -1,3 +1,4 @@
+// frontend/src/components/features/admin/menu_calendar/CalendarGrid.tsx
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +15,6 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ onSelectDay }) => {
     const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
     
     // Adjust for Persian calendar (Saturday is the first day of the week)
-    // In JS, getDay() is 0=Sun, 1=Mon,..., 6=Sat. We want Sat to be index 0.
     const startDayOfWeek = (startOfMonth.getDay() + 1) % 7; 
 
     const daysInMonth = Array.from({ length: endOfMonth.getDate() }, (_, i) => i + 1);
@@ -34,10 +34,12 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ onSelectDay }) => {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
+                {/* [MODIFIED] Corrected chevron direction */}
                 <Button variant="outline" size="icon" onClick={handlePrevMonth}><ChevronRight /></Button>
                 <CardTitle className="text-xl">
                     {currentDate.toLocaleDateString('fa-IR', { year: 'numeric', month: 'long' })}
                 </CardTitle>
+                {/* [MODIFIED] Corrected chevron direction */}
                 <Button variant="outline" size="icon" onClick={handleNextMonth}><ChevronLeft /></Button>
             </CardHeader>
             <CardContent>
@@ -62,8 +64,6 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ onSelectDay }) => {
                                 className={`p-2 h-24 border rounded-md flex flex-col items-start cursor-pointer transition-colors hover:bg-accent ${isToday ? 'border-primary border-2' : ''}`}
                             >
                                 <span className="font-bold">{day}</span>
-                                {/* In a real app, you would fetch and show which days have menus */}
-                                {/* <span className="text-xs text-green-600 mt-auto">منو دارد</span> */}
                             </div>
                         );
                     })}

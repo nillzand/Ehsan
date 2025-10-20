@@ -1,4 +1,4 @@
-# schedules/views.py
+# backend/schedules/views.py
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -10,8 +10,9 @@ from .serializers import (
     DailyMenuReadSerializer,
     DailyMenuWriteSerializer,
 )
-# [FIX THIS LINE] Change IsAdminOrReadOnly to IsSuperAdminOrReadOnly
 from core.permissions import IsSuperAdminOrReadOnly
+# [NEW] Import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
@@ -24,7 +25,6 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         'daily_menus__available_sides'
     ).select_related('company').all()
     serializer_class = ScheduleSerializer
-    # [FIX THIS LINE] Use the new, correct permission class name
     permission_classes = [IsSuperAdminOrReadOnly]
 
 
@@ -33,8 +33,10 @@ class DailyMenuViewSet(viewsets.ModelViewSet):
     API endpoint for managing daily menus within a specific schedule.
     Accessed via a nested route: /api/schedules/<schedule_pk>/daily_menus/
     """
-    # [FIX THIS LINE] Use the new, correct permission class name
     permission_classes = [IsSuperAdminOrReadOnly]
+    # [NEW] Add filtering capabilities
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['date'] # Allows filtering by ?date=YYYY-MM-DD
 
     def get_queryset(self):
         """

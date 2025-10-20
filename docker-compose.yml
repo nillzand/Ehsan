@@ -4,20 +4,21 @@ services:
   # --- Backend Service (Django + Gunicorn) ---
   backend:
     build: ./backend
-    # We move the command to the prod override file
     volumes:
-      # We add a volume for static files that Nginx will use
       - staticfiles:/app/staticfiles
+      - mediafiles:/app/mediafiles # Add this line for media files
     env_file:
       - .env.prod
     depends_on:
       - db
 
   # --- Frontend Build Service ---
-  # This is a temporary service just to build our React app
-  frontend-build:
-    build: ./frontend
-    # After it runs `npm run build`, it will create a 'dist' volume
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Pass the API URL from the .env.prod file into the build
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
     volumes:
       - frontend-dist:/app/dist
 
@@ -35,18 +36,18 @@ services:
   nginx:
     build: ./nginx
     ports:
-      - "80:80"  # Map host port 80 to container port 80
+      - "80:80"
     volumes:
-      # Mount the built frontend files and backend static files
       - frontend-dist:/usr/share/nginx/html
       - staticfiles:/app/staticfiles
+      - mediafiles:/app/mediafiles # Add this line for media files
     depends_on:
       - backend
-      - frontend-build
+      - frontend
 
 # Define the named volumes
 volumes:
   postgres_data:
   frontend-dist:
   staticfiles:
-  mediafiles: 
+  mediafiles:

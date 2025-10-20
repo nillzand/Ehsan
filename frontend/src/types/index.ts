@@ -138,12 +138,31 @@ export interface DashboardStats {
   top_5_foods: { name: string; count: number }[];
 }
 
-// Simplified admin report type to match ReportsPage.tsx usage
+// [MODIFIED] This type now matches the nested structure from the Django backend
 export interface AdminReportData {
-  total_revenue_last_30_days: number;
-  average_daily_orders: number;
-  chart_data: {
-    date: string;
-    total_orders: number;
+  summary: {
+    orders_today: number;
+    pending_orders_total: number;
+    total_sales_today: number;
+  };
+  top_items: {
+    foodId: number;
+    name: string;
+    ordered: number;
   }[];
+  sales_by_date: {
+    date: string;
+    orders: number;
+    revenue: number;
+  }[];
+  company_stats: {
+    companyId: number;
+    name: string;
+    active_users: number;
+    orders: number;
+  }[];
+  user_stats: {
+    total_users: number;
+    active_last_30_days: number;
+  };
 }
